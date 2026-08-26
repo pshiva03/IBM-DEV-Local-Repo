@@ -34,10 +34,10 @@ jobs:
           
           Write-Host "Configuring sparse checkout for packages: $packages"
           
-          # Set up paths relative to your repository root (e.g., "is-packages/PackageA")
+          # Set up paths relative to your repository root (e.g., "IBM-DEV-Local-Repo/PackageA")
           foreach ($pkg in $packages) {
               if (-not [string]::IsNullOrEmpty($pkg)) {
-                  $gitPath = "is-packages/$pkg"
+                  $gitPath = "IBM-DEV-Local-Repo/$pkg"
                   Write-Host "Adding path: $gitPath"
                   git sparse-checkout add $gitPath
               }
@@ -48,19 +48,10 @@ jobs:
 
       # Step 3: Verify the workspace files (Optional diagnostic step)
       - name: Verify Workspace Structure
-        shell: powershell
+        shell: cmd
         run: |
-          Write-Host "==== Current Workspace Contents ===="
-          if (Test-Path "IBM-DEV-Local-Repo") {
-              $files = Get-ChildItem -Path "IBM-DEV-Local-Repo" -Recurse
-              if ($files) {
-                  $files | ForEach-Object { $_.FullName }
-              } else {
-                  Write-Warning "The 'IBM-DEV-Local-Repo' folder exists but it is completely EMPTY."
-              }
-          } else {
-              Write-Error "The 'IBM-DEV-Local-Repo' folder does not exist at all."
-          }
+          echo "==== Current Workspace Contents ===="
+          dir /s /b IBM-DEV-Local-Repo
 
       # Step 4: Execute webMethods ABE for the specific checked-out packages
       - name: Execute webMethods ABE Build
