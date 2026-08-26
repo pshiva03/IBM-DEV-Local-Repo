@@ -1,0 +1,62 @@
+name: Dynamic Package Checkout
+
+on:
+  workflow_dispatch:
+    inputs:
+      package_list:
+        description: 'Comma-separated list of packages to checkout (e.g., PackageA, PackageB)'
+        required: true
+        type: string
+        default: 'PackageA, PackageB'
+
+jobs:
+  build-selected-packages:
+    runs-on: windows-latest # Configured for your Windows environment
+
+    steps:
+      # Step 1: Initialize Git and fetch repository structure without downloading files
+      - name: Initialize Sparse Checkout
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            config/ # Always include your configuration folder
+          sparse-checkout-cone-mode: false # Allows specifying individual deep subdirectories
+
+      # Step 2: Convert comma-separated string to Git sparse-checkout paths using PowerShell
+      - name: Configure Target Directories
+        shell: powershell
+        run: |
+          # Retrieve the input string (e.g., "PackageA, PackageB")
+          $inputString = "${{ github.event.inputs.package_list }}"
+          
+          # Clean spaces and split by commas
+          $packages = $inputString.Split(',').ForEach({ $_.Trim() })
+          
+          Write-Host "Configuring sparse checkout for packages: $packages"
+          
+          # Set up paths relative to your repository root (e.g., "is-packages/PackageA")
+          foreach ($pkg in $packages) {
+              if (-not [string]::IsNullOrEmpty($pkg)) {
+                  $gitPath = "is-packages/$pkg"
+                  Write-Host "Adding path: $gitPath"
+                  git sparse-checkout add $gitPath
+              }
+          }
+          
+          # Force Git to pull the newly added package folders
+          git checkout
+
+      # Step 3: Verify the workspace files (Optional diagnostic step)
+      - name: Verify Workspace Structure
+        shell: cmd
+        run: |
+          echo "==== Current Workspace Contents ===="
+          dir /s /b is-packages
+
+      # Step 4: Execute webMethods ABE for the specific checked-out packages
+      - name: Execute webMethods ABE Build
+        shell: cmd
+        run: |
+          copy /Y config\build.properties C:\SoftwareAG\instance2\common\AssetBuildEnvironment\master_build\build.properties
+          cd C:\SoftwareAG\instance2\common\AssetBuildEnvironment\master_build
+          cmd.exe /c build.bat
