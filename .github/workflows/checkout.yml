@@ -48,10 +48,19 @@ jobs:
 
       # Step 3: Verify the workspace files (Optional diagnostic step)
       - name: Verify Workspace Structure
-        shell: cmd
+        shell: powershell
         run: |
-          echo "==== Current Workspace Contents ===="
-          dir /s /b IBM-DEV-Local-Repo
+          Write-Host "==== Current Workspace Contents ===="
+          if (Test-Path "IBM-DEV-Local-Repo") {
+              $files = Get-ChildItem -Path "IBM-DEV-Local-Repo" -Recurse
+              if ($files) {
+                  $files | ForEach-Object { $_.FullName }
+              } else {
+                  Write-Warning "The 'IBM-DEV-Local-Repo' folder exists but it is completely EMPTY."
+              }
+          } else {
+              Write-Error "The 'IBM-DEV-Local-Repo' folder does not exist at all."
+          }
 
       # Step 4: Execute webMethods ABE for the specific checked-out packages
       - name: Execute webMethods ABE Build
