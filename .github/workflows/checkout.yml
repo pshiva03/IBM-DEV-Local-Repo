@@ -51,7 +51,7 @@ jobs:
         shell: cmd
         run: |
           echo "==== Current Workspace Contents ===="
-          dir /s /b is-packages
+          dir /s /b IBM-DEV-Local-Repo\IBM-DEV-Local-Repo
 
       # Step 4: Execute webMethods ABE for the specific checked-out packages
       - name: Execute webMethods ABE Build
