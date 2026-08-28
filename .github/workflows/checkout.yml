@@ -46,12 +46,7 @@ jobs:
           # Force Git to pull the newly added package folders
           git checkout
 
-      # Step 3: Verify the workspace files (Optional diagnostic step)
-      - name: Verify Workspace Structure
-        shell: cmd
-        run: |
-          echo "==== Current Workspace Contents ===="
-          dir /s /b IBM-DEV-Local-Repo
+
 
       # Step 4: Execute webMethods ABE for the specific checked-out packages
       - name: Execute webMethods ABE Build
