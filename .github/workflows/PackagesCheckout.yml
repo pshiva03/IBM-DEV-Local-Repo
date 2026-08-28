@@ -1,0 +1,33 @@
+name: Selective Package Checkout
+
+on:
+workflow_dispatch:
+inputs:
+packages:
+description: "Comma separated package list"
+required: true
+default: "packages/app1,packages/common"
+
+jobs:
+checkout:
+runs-on: ubuntu-latest
+
+steps:
+- name: Checkout repository
+uses: actions/checkout@v4
+with:
+fetch-depth: 1
+
+- name: Sparse checkout selected packages
+run: |
+git sparse-checkout init --cone
+
+IFS=',' read -ra PKGS <<< "${{ github.event.inputs.packages }}"
+
+git sparse-checkout set "${PKGS[@]}"
+
+echo "Checked out packages:"
+printf '%s\n' "${PKGS[@]}"
+
+- name: Verify
+run: |
