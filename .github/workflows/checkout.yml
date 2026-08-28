@@ -7,7 +7,7 @@ on:
         description: 'Comma-separated list of packages to checkout (e.g., PackageA, PackageB)'
         required: true
         type: string
-        default: 'PackageA, PackageB'
+        default: 'PackageA, PackageC'
 
 jobs:
  checkout:
