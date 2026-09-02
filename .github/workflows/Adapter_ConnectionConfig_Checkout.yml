@@ -43,7 +43,7 @@ jobs:
 
    - name: Copy Environment Configuration
      run: |
-       Config_File="${{ github.workspace }}/config/JDBCConnDetails_${{ inputs.Target_Env }}.csv"
+       Config_File="${{ github.workspace }}/${{ inputs.Adapter_ConfigPkg }}/config/JDBCConnDetails_${{ inputs.Target_Env }}.csv"
        Dest_Dir="deploy/${{ inputs.Adapter_ConfigPkg }}/config/"
        
        echo "Copying from: $Config_File"
