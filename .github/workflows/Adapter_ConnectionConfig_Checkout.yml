@@ -1,4 +1,4 @@
-name: Adapter connection package checkout
+name: Adapter connection configuration package checkout
 
 on:
   workflow_dispatch:
