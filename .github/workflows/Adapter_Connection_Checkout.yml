@@ -38,7 +38,7 @@ jobs:
       
    - name: Copy Environment Configuration
      run: |
-      cp $Config_File deploy/${{ inputs.Adapter_ConfigPkg }}/Config/
+      cp $Config_File deploy/${{ inputs.Adapter_ConfigPkg }}/config/
 
    - name: Deploy Package
      run: |
