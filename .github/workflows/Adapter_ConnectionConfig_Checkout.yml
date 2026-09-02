@@ -30,7 +30,7 @@ jobs:
        
    - name: Verify source config file exists
      run: |
-       Config_File="${{ github.workspace }}/config/JDBCConnDetails_${{ inputs.Target_Env }}.csv"
+       Config_File="${{ github.workspace }}/${{ inputs.Adapter_ConfigPkg }}/config/JDBCConnDetails_${{ inputs.Target_Env }}.csv"
        echo "Looking for config file at: $Config_File"
        if [ -f "$Config_File" ]; then
          echo "✓ Config file found"
