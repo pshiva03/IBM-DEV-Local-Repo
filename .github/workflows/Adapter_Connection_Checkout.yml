@@ -41,3 +41,7 @@ jobs:
      run: |
       echo "Deploying Package ${{ inputs.Adapter_ConfigPkg }}"
       echo "Environment ${{ inputs.Target_Env }}"
+
+   - name: Verify deployment folder
+     run: |
+      find ${{ github.workspace }}/deploy -type d
