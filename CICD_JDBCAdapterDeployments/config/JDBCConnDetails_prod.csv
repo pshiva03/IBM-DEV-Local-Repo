@@ -1,0 +1,4 @@
+packageName,connectionAlias,transactionType,datasourceClass,serverName,user,password,databaseName,portNumber,networkProtocol,otherProperties,poolable,minimumPoolSize,maximumPoolSize,poolIncrementSize,blockingTimeout,expireTimeout,startupRetryCount,startupBackoffSecs
+Books,connection:Local105DBConn_NoTxn,LOCAL_TRANSACTION,com.microsoft.sqlserver.jdbc.SQLServerDataSource,vmdevopscicd1.eur.ad.sag\MSSQL_CICD,wmdbuser,manage123,CICD_DB_PROD,,,,TRUE,2,10,1,1000,1000,0,10
+Books,connection:SampleConnection2_NT,NO_TRANSACTION,com.mysql.jdbc.jdbc2.optional.MysqlDataSource,PRODPROD,PRODUSER,devdev,PRODDB,3330,,,TRUE,2,10,1,1000,1000,0,10
+Books,connection:SampleConnection3_XA,LOCAL_TRANSACTION,com.mysql.jdbc.jdbc2.optional.MysqlDataSource,PRODPROD,PRODUSER,devdev,PRODDB,33306,,,FALSE,2,10,1,1000,1000,0,10
