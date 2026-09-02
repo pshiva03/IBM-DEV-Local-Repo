@@ -26,7 +26,7 @@ jobs:
    - name: Checkout Selected Package
      run: |
        mkdir deploy
-       cp -R pshiva03/IBM-DEV-Local-Repo/${{ inputs.Adapter_ConfigPkg }} deploy/
+       cp -R ${{ github.workspace }}/${{ inputs.Adapter_ConfigPkg }} deploy/
        
    - name: Identify Enviorment config
      id: config
