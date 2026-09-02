@@ -1,0 +1,66 @@
+name: Adapter connection configuration package checkout
+
+on:
+  workflow_dispatch:
+    inputs:
+     Adapter_ConfigPkg:
+      description: "Package consists of adapter connection"
+      type: string
+     Target_Env:
+      description: "Target environment to deploy connection"
+      type: string
+
+jobs:
+ deploy:
+  runs-on: ubuntu-latest
+  
+  environment:
+   name: ${{ inputs.Target_Env }}
+
+  steps:
+   - name: Checkout repository
+     uses: actions/checkout@v4
+     with:
+      fetch-depth: 1
+     
+   - name: Checkout Selected Package
+     run: |
+       mkdir deploy
+       cp -R ${{ github.workspace }}/${{ inputs.Adapter_ConfigPkg }} deploy/
+       
+   - name: Verify source config file exists
+     run: |
+       Config_File="${{ github.workspace }}/config/JDBCConnDetails_${{ inputs.Target_Env }}.csv"
+       echo "Looking for config file at: $Config_File"
+       if [ -f "$Config_File" ]; then
+         echo "✓ Config file found"
+       else
+         echo "✗ Config file NOT found at: $Config_File"
+         echo "Available files in config directory:"
+         ls -la ${{ github.workspace }}/config/ || echo "config directory does not exist"
+         exit 1
+       fi
+
+   - name: Copy Environment Configuration
+     run: |
+       Config_File="${{ github.workspace }}/config/JDBCConnDetails_${{ inputs.Target_Env }}.csv"
+       Dest_Dir="deploy/${{ inputs.Adapter_ConfigPkg }}/config/"
+       
+       echo "Copying from: $Config_File"
+       echo "Copying to: $Dest_Dir"
+       
+       mkdir -p "$Dest_Dir"
+       cp "$Config_File" "$Dest_Dir"
+       
+       echo "✓ File copied successfully"
+
+   - name: Deploy Package
+     run: |
+       echo "Deploying Package ${{ inputs.Adapter_ConfigPkg }}"
+       echo "Environment ${{ inputs.Target_Env }}"
+
+   - name: Verify deployment folder
+     run: |
+       echo "Verifying deployed files:"
+       find ${{ github.workspace }}/deploy/${{ inputs.Adapter_ConfigPkg }}/config/ -type f
+       ls -la deploy/${{ inputs.Adapter_ConfigPkg }}/config/
