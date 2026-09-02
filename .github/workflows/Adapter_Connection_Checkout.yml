@@ -24,7 +24,7 @@ jobs:
    - name: Checkout Selected Package
      run: |
        mkdir deploy
-       cp -R packages/${{ inputs.Adapter_ConfigPkg }} deploy/
+       cp -R IBM-DEV-Local-Repo/tree/master/${{ inputs.Adapter_ConfigPkg }} deploy/
        
    - name: Identify Enviorment config
      id: config
