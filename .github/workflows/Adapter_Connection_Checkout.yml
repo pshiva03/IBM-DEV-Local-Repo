@@ -12,7 +12,7 @@ on:
 
 jobs:
  deploy:
-  runs-on: self-hosted
+  runs-on: ubuntu-latest
   
   environment:
    name: ${{ inputs.Target_Env }}
@@ -24,14 +24,12 @@ jobs:
       fetch-depth: 1
      
    - name: Checkout Selected Package
-     shell: pwsh
      run: |
        mkdir deploy
        cp -R ${{ github.workspace }}/${{ inputs.Adapter_ConfigPkg }} deploy/
        
    - name: Identify Enviorment config and copy
      id: config
-     shell: pwsh
      run: |
       Config_File=config/JDBCConnDetails_${{ inputs.Target_Env }}.csv
       
@@ -40,7 +38,10 @@ jobs:
       cp ${{ github.workspace }}/${{ inputs.Adapter_ConfigPkg }}/$Config_File deploy/${{ inputs.Adapter_ConfigPkg }}/config/
 
    - name: Deploy Package
-     shell: pwsh
      run: |
       echo "Deploying Package ${{ inputs.Adapter_ConfigPkg }}"
       echo "Environment ${{ inputs.Target_Env }}"
+
+   - name: Verify deployment folder
+     run: |
+      find ${{ github.workspace }}/deploy/${{ inputs.Adapter_ConfigPkg }}/config/ -type d
