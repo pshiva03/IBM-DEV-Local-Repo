@@ -1,0 +1,44 @@
+name: Adapter connection package checkout
+
+on:
+  workflow_dispatch:
+    inputs:
+     Adapter_ConfigPkg:
+      description: "Package consists of adapter connection"
+      type: string
+     Target_Env:
+      description: "Target environment to deploy connection"
+      type: string
+
+jobs:
+ deploy:
+  runs-on: ubuntu-latest
+  
+  environment:
+   name: ${{ inputs.Target_Env }}
+
+  steps:
+   - name: Checkout repository
+     uses: actions/checkout@v4
+     
+   - name: Checkout Selected Package
+     run: |
+       mkdir deploy
+       cp -R packages/${{ inputs.Adapter_ConfigPkg }} deploy/
+       
+   - name: Identify Enviorment config
+     id: config
+     run: |
+      Config_File=config/JDBCConnDetails_${{ inputs.Target_Env }}.csv
+      
+      echo "Using:"
+      echo "$Config_File"
+      
+   - name: Copy Environment Configuration
+     run: |
+      cp $Config_File deploy/${{ inputs.Adapter_ConfigPkg }}/Config/
+
+   - name: Deploy Package
+     run: |
+      echo "Deploying Package ${{ inputs.Adapter_ConfigPkg }}"
+      echo "Environment ${{ inputs.Target_Env }}
