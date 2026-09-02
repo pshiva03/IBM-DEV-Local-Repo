@@ -24,7 +24,6 @@ jobs:
       fetch-depth: 1
      
    - name: Checkout Selected Package
-     shell: bash
      run: |
        mkdir deploy
        cp -R ${{ github.workspace }}/${{ inputs.Adapter_ConfigPkg }} deploy/
