@@ -40,4 +40,4 @@ jobs:
    - name: Deploy Package
      run: |
       echo "Deploying Package ${{ inputs.Adapter_ConfigPkg }}"
-      echo "Environment ${{ inputs.Target_Env }}
+      echo "Environment ${{ inputs.Target_Env }}"
