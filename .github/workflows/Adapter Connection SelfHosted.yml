@@ -30,6 +30,7 @@ jobs:
        if (-not (Test-Path $deployPath)) {
          New-Item -ItemType Directory -Path $deployPath -Force | Out-Null
        }
+       Write-Host "Deploy directory created at: $deployPath"
        
    - name: Checkout Selected Package (excluding config)
      shell: powershell
@@ -37,11 +38,11 @@ jobs:
        $sourcePath = "${{ github.workspace }}\${{ inputs.Adapter_ConfigPkg }}"
        $destPath = "${{ github.workspace }}\deploy\${{ inputs.Adapter_ConfigPkg }}"
        
-       Write-Host "Source: $sourcePath".
-       Write-Host "Destination: $destPath".
+       Write-Host "Source: $sourcePath"
+       Write-Host "Destination: $destPath"
        
        if (-not (Test-Path $sourcePath)) {
-         Write-Host "✗ Source package not found: $sourcePath".
+         Write-Host "Source package not found: $sourcePath"
          exit 1
        }
        
@@ -68,7 +69,7 @@ jobs:
        # Create empty config directory
        $configDir = Join-Path $destPath "config"
        New-Item -ItemType Directory -Path $configDir -Force | Out-Null
-       Write-Host "✓ Package structure copied (excluding config)".
+       Write-Host "Package structure copied (excluding config)"
 
    - name: Copy only required Environment Configuration
      shell: powershell
@@ -77,11 +78,11 @@ jobs:
        $destDir = "${{ github.workspace }}\deploy\${{ inputs.Adapter_ConfigPkg }}\config\"
        
        Write-Host "Copying only ${{ inputs.Target_Env }} config file"
-       Write-Host "Source: $configFile".
-       Write-Host "Destination: $destDir".
+       Write-Host "Source: $configFile"
+       Write-Host "Destination: $destDir"
        
        if (-not (Test-Path $configFile)) {
-         Write-Host "✗ Config file not found: $configFile"
+         Write-Host "Config file not found: $configFile"
          Write-Host "Available config files:"
          Get-ChildItem "${{ github.workspace }}\${{ inputs.Adapter_ConfigPkg }}\config\" -Filter "*.csv" | ForEach-Object { Write-Host "  - $($_.Name)" }
          exit 1
@@ -92,7 +93,7 @@ jobs:
        }
        
        Copy-Item -Path $configFile -Destination $destDir -Force
-       Write-Host "✓ Environment-specific config file copied successfully".
+       Write-Host "Environment-specific config file copied successfully"
 
    - name: Verify deployment folder
      shell: powershell
@@ -104,19 +105,19 @@ jobs:
          Write-Host "  - $($_.Name)"
        }
        
-       $fileCount = (Get-ChildItem -Path $deployPath -File).Count
-       Write-Host "".
-       Write-Host "Total files in config: $fileCount".
+       $fileCount = (Get-ChildItem -Path $deployPath -File | Measure-Object).Count
+       Write-Host ""
+       Write-Host "Total files in config: $fileCount"
        
        if ($fileCount -ne 1) {
-         Write-Host "⚠ Warning: Expected 1 file, found $fileCount".
+         Write-Host "Warning: Expected 1 file, found $fileCount"
        } else {
-         Write-Host "✓ Correct number of config files".
+         Write-Host "Correct number of config files"
        }
 
    - name: Deploy Package
      shell: powershell
      run: |
-       Write-Host "Deploying Package ${{ inputs.Adapter_ConfigPkg }}".
-       Write-Host "Environment ${{ inputs.Target_Env }}".
-       Write-Host "Deployment location: ${{ github.workspace }}\deploy\${{ inputs.Adapter_ConfigPkg }}".
+       Write-Host "Deploying Package ${{ inputs.Adapter_ConfigPkg }}"
+       Write-Host "Environment ${{ inputs.Target_Env }}"
+       Write-Host "Deployment location: ${{ github.workspace }}\deploy\${{ inputs.Adapter_ConfigPkg }}"
