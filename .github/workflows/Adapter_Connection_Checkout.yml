@@ -28,16 +28,13 @@ jobs:
        mkdir deploy
        cp -R ${{ github.workspace }}/${{ inputs.Adapter_ConfigPkg }} deploy/
        
-   - name: Identify Enviorment config
+   - name: Identify Enviorment config and copy
      id: config
      run: |
       Config_File=config/JDBCConnDetails_${{ inputs.Target_Env }}.csv
       
       echo "Using:"
       echo "$Config_File"
-      
-   - name: Copy Environment Configuration
-     run: |
       cp $Config_File deploy/${{ inputs.Adapter_ConfigPkg }}/config/
 
    - name: Deploy Package
