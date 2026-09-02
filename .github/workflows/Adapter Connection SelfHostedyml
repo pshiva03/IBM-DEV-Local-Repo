@@ -74,7 +74,7 @@ jobs:
    - name: Copy only required Environment Configuration
      shell: powershell
      run: |
-       $configFile = "${{ github.workspace }}\config\JDBCConnDetails_${{ inputs.Target_Env }}.csv"
+       $configFile = "${{ github.workspace }}\${{ inputs.Adapter_ConfigPkg }}\config\JDBCConnDetails_${{ inputs.Target_Env }}.csv"
        $destDir = "${{ github.workspace }}\deploy\${{ inputs.Adapter_ConfigPkg }}\config\"
        
        Write-Host "Copying only ${{ inputs.Target_Env }} config file"
@@ -84,7 +84,7 @@ jobs:
        if (-not (Test-Path $configFile)) {
          Write-Host "✗ Config file not found: $configFile"
          Write-Host "Available config files:"
-         Get-ChildItem "${{ github.workspace }}\config\" -Filter "*.csv" | ForEach-Object { Write-Host "  - $($_.Name)" }
+         Get-ChildItem "${{ github.workspace }}\${{ inputs.Adapter_ConfigPkg }}\config\" -Filter "*.csv" | ForEach-Object { Write-Host "  - $($_.Name)" }
          exit 1
        }
        
