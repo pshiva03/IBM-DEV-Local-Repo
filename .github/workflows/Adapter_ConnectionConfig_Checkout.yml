@@ -1,4 +1,4 @@
-name: Adapter connection configuration package checkout
+name: Adapter connection package checkout
 
 on:
   workflow_dispatch:
@@ -23,42 +23,46 @@ jobs:
      with:
       fetch-depth: 1
      
-   - name: Checkout Selected Package
+   - name: Checkout Selected Package (excluding config)
      run: |
-       mkdir deploy
-       cp -R ${{ github.workspace }}/${{ inputs.Adapter_ConfigPkg }} deploy/
-       
-   - name: Verify source config file exists
-     run: |
-       Config_File="${{ github.workspace }}/${{ inputs.Adapter_ConfigPkg }}/config/JDBCConnDetails_${{ inputs.Target_Env }}.csv"
-       echo "Looking for config file at: $Config_File"
-       if [ -f "$Config_File" ]; then
-         echo "✓ Config file found"
-       else
-         echo "✗ Config file NOT found at: $Config_File"
-         echo "Available files in config directory:"
-         ls -la ${{ github.workspace }}/config/ || echo "config directory does not exist"
-         exit 1
-       fi
+       mkdir -p deploy/${{ inputs.Adapter_ConfigPkg }}
+       # Copy everything except the config directory
+       find ${{ github.workspace }}/${{ inputs.Adapter_ConfigPkg }} -maxdepth 1 -type f -exec cp {} deploy/${{ inputs.Adapter_ConfigPkg }}/ \;
+       # Copy directories except config
+       find ${{ github.workspace }}/${{ inputs.Adapter_ConfigPkg }} -maxdepth 1 -type d ! -name config ! -name . -exec cp -r {} deploy/${{ inputs.Adapter_ConfigPkg }}/ \;
+       # Create empty config directory
+       mkdir -p deploy/${{ inputs.Adapter_ConfigPkg }}/config
 
-   - name: Copy Environment Configuration
+   - name: Copy only the required Environment Configuration
      run: |
        Config_File="${{ github.workspace }}/${{ inputs.Adapter_ConfigPkg }}/config/JDBCConnDetails_${{ inputs.Target_Env }}.csv"
        Dest_Dir="deploy/${{ inputs.Adapter_ConfigPkg }}/config/"
        
-       echo "Copying from: $Config_File"
-       echo "Copying to: $Dest_Dir"
+       echo "Copying only ${{ inputs.Target_Env }} config file"
+       echo "Source: $Config_File"
+       echo "Destination: $Dest_Dir"
        
-       mkdir -p "$Dest_Dir"
-       cp "$Config_File" "$Dest_Dir"
-       
-       echo "✓ File copied successfully"
+       if [ -f "$Config_File" ]; then
+         cp "$Config_File" "$Dest_Dir"
+         echo "✓ Environment-specific config file copied successfully"
+       else
+         echo "✗ Config file not found: $Config_File"
+         exit 1
+       fi
+
+   - name: Verify deployment folder (only environment config)
+     run: |
+       echo "Verifying deployed files:"
+       find deploy/${{ inputs.Adapter_ConfigPkg }}/config/ -type f
+       echo ""
+       echo "File count in config directory:"
+       find deploy/${{ inputs.Adapter_ConfigPkg }}/config/ -type f | wc -l
 
    - name: Deploy Package
      run: |
-       echo "Deploying Package ${{ inputs.Adapter_ConfigPkg }}"
-       echo "Environment ${{ inputs.Target_Env }}"
-
+      echo "Deploying Package ${{ inputs.Adapter_ConfigPkg }}"
+      echo "Environment ${{ inputs.Target_Env }}"
+      
    - name: Verify deployment folder
      run: |
        echo "Verifying deployed files:"
