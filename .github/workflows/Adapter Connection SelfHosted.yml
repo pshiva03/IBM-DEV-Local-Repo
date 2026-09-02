@@ -30,7 +30,6 @@ jobs:
        if (-not (Test-Path $deployPath)) {
          New-Item -ItemType Directory -Path $deployPath -Force | Out-Null
        }
-       Write-Host "✓ Deploy directory created at: $deployPath"
        
    - name: Checkout Selected Package (excluding config)
      shell: powershell
