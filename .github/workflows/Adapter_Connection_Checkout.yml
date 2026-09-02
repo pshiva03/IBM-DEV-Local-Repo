@@ -24,13 +24,14 @@ jobs:
       fetch-depth: 1
      
    - name: Checkout Selected Package
+     shell: pwsh
      run: |
        mkdir deploy
        cp -R ${{ github.workspace }}/${{ inputs.Adapter_ConfigPkg }} deploy/
        
    - name: Identify Enviorment config and copy
      id: config
-     shell: bash
+     shell: pwsh
      run: |
       Config_File=config/JDBCConnDetails_${{ inputs.Target_Env }}.csv
       
@@ -39,7 +40,7 @@ jobs:
       cp ${{ github.workspace }}/${{ inputs.Adapter_ConfigPkg }}/$Config_File deploy/${{ inputs.Adapter_ConfigPkg }}/config/
 
    - name: Deploy Package
-     shell: bash
+     shell: pwsh
      run: |
       echo "Deploying Package ${{ inputs.Adapter_ConfigPkg }}"
       echo "Environment ${{ inputs.Target_Env }}"
